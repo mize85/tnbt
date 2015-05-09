@@ -1,0 +1,15 @@
+Django==1.8.1
+PyYAML==3.11
+awsebcli==3.4
+cement==2.4.0
+djangorestframework==3.1.1
+docker-py==1.1.0
+dockerpty==0.3.2
+docopt==0.6.2
+jmespath==0.7.1
+pathspec==0.3.3
+python-dateutil==2.4.2
+requests==2.6.2
+six==1.9.0
+texttable==0.8.3
+websocket-client==0.30.0
