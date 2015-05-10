@@ -23,6 +23,14 @@ module.exports = function(environment) {
     ENV.APP.API_HOST = 'http://localhost:8000';
     ENV.APP.API_NAMESPACE = 'api/v1';
 
+
+    ENV['simple-auth'] = {
+      authorizer: 'authorizer:django-rest',
+      serverTokenEndpoint: ENV.APP.API_HOST+'/api-token-auth/',
+      crossOriginWhitelist: [ENV.APP.API_HOST]
+    };
+
+
   if (environment === 'development') {
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;

@@ -4,8 +4,13 @@ var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 var app = new EmberApp({
     storeConfigInMeta: false,
+    minifyCSS: {
+      enabled: false
+    },
+    minifyJS: {
+      enabled: false
+    },
     fingerprint: {
-     enabled: true,
      prepend: '/static/'
    }
 });
@@ -22,5 +27,10 @@ var app = new EmberApp({
 // modules that you would like to import into your application
 // please specify an object with the list of modules as keys
 // along with the exports of each module as its value.
+
+app.import('bower_components/bootstrap/dist/css/bootstrap.css');
+app.import('bower_components/bootstrap/dist/css/bootstrap.css.map', {
+  destDir: 'assets'
+});
 
 module.exports = app.toTree();
