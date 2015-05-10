@@ -605,7 +605,7 @@ define('web-app/templates/application', ['exports'], function (exports) {
         var el1 = dom.createTextNode("\n    ");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("nav");
-        dom.setAttribute(el1,"class","navbar navbar-default navbar-fixed-top");
+        dom.setAttribute(el1,"class","navbar navbar-inverse navbar-fixed-top");
         var el2 = dom.createTextNode("\n      ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
