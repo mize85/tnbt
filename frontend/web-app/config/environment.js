@@ -24,7 +24,7 @@ module.exports = function(environment) {
 
 
     if (environment === 'production') {
-        HOST = "http://tnbt.elasticbeanstalk.com/";
+        HOST = "http://tnbt.elasticbeanstalk.com";
     }
 
     ENV.APP.API_HOST = HOST;

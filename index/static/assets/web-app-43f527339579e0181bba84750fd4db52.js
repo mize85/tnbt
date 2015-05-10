@@ -620,13 +620,13 @@ define('web-app/templates/login', ['exports'], function (exports) {
 /* jshint ignore:start */
 
 define('web-app/config/environment', ['ember'], function(Ember) {
-  return { 'default': {"modulePrefix":"web-app","podModulePrefix":"web-app/pods","environment":"production","baseURL":"/","locationType":"auto","EmberENV":{"FEATURES":{}},"APP":{"API_HOST":"http://tnbt.elasticbeanstalk.com/","API_NAMESPACE":"api/v1","name":"web-app","version":"0.0.0.6b9e63de","API_ADD_TRAILING_SLASHES":true},"simple-auth":{"authorizer":"simple-auth-authorizer:token","serverTokenEndpoint":"http://tnbt.elasticbeanstalk.com//api-token-auth/","crossOriginWhitelist":["http://tnbt.elasticbeanstalk.com/"]},"simple-auth-token":{"serverTokenEndpoint":"http://tnbt.elasticbeanstalk.com//api-token-auth/","authorizationPrefix":"Token ","tokenPropertyName":"secure.token"},"contentSecurityPolicy":{"default-src":"'none'","script-src":"'self'","font-src":"'self' ","connect-src":"'self' http://tnbt.elasticbeanstalk.com/","img-src":"'self' ","style-src":"'self' 'unsafe-inline' http://fonts.googleapis.com","media-src":"'self'"},"contentSecurityPolicyHeader":"Content-Security-Policy-Report-Only","exportApplicationGlobal":false}};
+  return { 'default': {"modulePrefix":"web-app","podModulePrefix":"web-app/pods","environment":"production","baseURL":"/","locationType":"auto","EmberENV":{"FEATURES":{}},"APP":{"API_HOST":"http://tnbt.elasticbeanstalk.com","API_NAMESPACE":"api/v1","name":"web-app","version":"0.0.0.52c61241","API_ADD_TRAILING_SLASHES":true},"simple-auth":{"authorizer":"simple-auth-authorizer:token","serverTokenEndpoint":"http://tnbt.elasticbeanstalk.com/api-token-auth/","crossOriginWhitelist":["http://tnbt.elasticbeanstalk.com"]},"simple-auth-token":{"serverTokenEndpoint":"http://tnbt.elasticbeanstalk.com/api-token-auth/","authorizationPrefix":"Token ","tokenPropertyName":"secure.token"},"contentSecurityPolicy":{"default-src":"'none'","script-src":"'self'","font-src":"'self' ","connect-src":"'self' http://tnbt.elasticbeanstalk.com","img-src":"'self' ","style-src":"'self' 'unsafe-inline' http://fonts.googleapis.com","media-src":"'self'"},"contentSecurityPolicyHeader":"Content-Security-Policy-Report-Only","exportApplicationGlobal":false}};
 });
 
 if (runningTests) {
   require("web-app/tests/test-helper");
 } else {
-  require("web-app/app")["default"].create({"API_HOST":"http://tnbt.elasticbeanstalk.com/","API_NAMESPACE":"api/v1","name":"web-app","version":"0.0.0.6b9e63de","API_ADD_TRAILING_SLASHES":true});
+  require("web-app/app")["default"].create({"API_HOST":"http://tnbt.elasticbeanstalk.com","API_NAMESPACE":"api/v1","name":"web-app","version":"0.0.0.52c61241","API_ADD_TRAILING_SLASHES":true});
 }
 
 /* jshint ignore:end */
