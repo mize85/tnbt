@@ -43,89 +43,12 @@ define('web-app/app', ['exports', 'ember', 'ember/resolver', 'ember/load-initial
   exports['default'] = App;
 
 });
-define('web-app/authenticators/django-rest', ['exports', 'ember', 'simple-auth/authenticators/base', 'web-app/utils/is-secure-url'], function (exports, Ember, Base, isSecureUrl) {
-
-  'use strict';
-
-  exports['default'] = Base['default'].extend({
-
-    init: function init() {
-      var globalConfig = window.ENV['simple-auth'] || {};
-      this.serverTokenEndpoint = globalConfig.serverTokenEndpoint || '/api-token-auth/';
-    },
-
-    authenticate: function authenticate(credentials) {
-      var _this = this;
-      return new Ember['default'].RSVP.Promise(function (resolve, reject) {
-        var data = { username: credentials.identification, password: credentials.password };
-        _this.makeRequest(_this.serverTokenEndpoint, data).then(function (response) {
-          Ember['default'].run(function () {
-            resolve(Ember['default'].$.extend(response));
-          });
-        }, function (xhr, status, error) {
-          Ember['default'].run(function () {
-            reject(xhr.responseJSON || xhr.responseText);
-          });
-        });
-      });
-    },
-
-    restore: function restore(data) {
-      return new Ember['default'].RSVP.Promise(function (resolve, reject) {
-        if (!Ember['default'].isEmpty(data.token)) {
-          resolve(data);
-        } else {
-          reject();
-        }
-      });
-    },
-
-    invalidate: function invalidate(data) {
-      function success(resolve) {
-        resolve();
-      }
-      return new Ember['default'].RSVP.Promise(function (resolve, reject) {
-        success(resolve);
-      });
-    },
-
-    makeRequest: function makeRequest(url, data) {
-      if (!isSecureUrl['default'](url)) {
-        Ember['default'].Logger.warn('Credentials are transmitted via an insecure connection - use HTTPS to keep them secure.');
-      }
-      return Ember['default'].$.ajax({
-        url: url,
-        type: 'POST',
-        data: data,
-        dataType: 'json',
-        contentType: 'application/x-www-form-urlencoded'
-      });
-    } });
-
-});
-define('web-app/authorizers/django-rest', ['exports', 'simple-auth/authorizers/base', 'web-app/utils/is-secure-url'], function (exports, Base, isSecureUrl) {
-
-  'use strict';
-
-  exports['default'] = Base['default'].extend({
-    authorize: function authorize(jqXHR, requestOptions) {
-      var accessToken = this.get('session.token');
-      if (this.get('session.isAuthenticated') && !Ember.isEmpty(accessToken)) {
-        if (!isSecureUrl['default'](requestOptions.url)) {
-          Ember.Logger.warn('Credentials are transmitted via an insecure connection - use HTTPS to keep them secure.');
-        }
-        jqXHR.setRequestHeader('Authorization', 'Token ' + accessToken);
-      }
-    }
-  });
-
-});
 define('web-app/controllers/login', ['exports', 'ember', 'simple-auth/mixins/login-controller-mixin'], function (exports, Ember, LoginControllerMixin) {
 
   'use strict';
 
   exports['default'] = Ember['default'].Controller.extend(LoginControllerMixin['default'], {
-    authenticator: 'authenticator:django-rest'
+    authenticator: 'simple-auth-authenticator:token'
   });
 
 });
@@ -144,33 +67,6 @@ define('web-app/initializers/app-version', ['exports', 'web-app/config/environme
         Ember['default'].libraries.register(appName, config['default'].APP.version);
         registered = true;
       }
-    }
-  };
-
-});
-define('web-app/initializers/auth', ['exports', 'web-app/config/environment'], function (exports, ENV) {
-
-  'use strict';
-
-  exports['default'] = {
-    name: 'auth',
-    before: 'django-rest-auth',
-    initialize: function initialize(container, application) {
-      window.ENV = ENV['default'];
-    }
-  };
-
-});
-define('web-app/initializers/django-rest', ['exports', 'web-app/authenticators/django-rest', 'web-app/authorizers/django-rest'], function (exports, Authenticator, Authorizer) {
-
-  'use strict';
-
-  exports['default'] = {
-    name: 'django-rest-auth',
-    before: 'simple-auth',
-    initialize: function initialize(container, application) {
-      container.register('authorizer:django-rest', Authorizer['default']);
-      container.register('authenticator:django-rest', Authenticator['default']);
     }
   };
 
@@ -195,6 +91,22 @@ define('web-app/initializers/export-application-global', ['exports', 'ember', 'w
     name: 'export-application-global',
 
     initialize: initialize
+  };
+
+});
+define('web-app/initializers/simple-auth-token', ['exports', 'simple-auth-token/configuration', 'simple-auth-token/authenticators/token', 'simple-auth-token/authenticators/jwt', 'simple-auth-token/authorizers/token', 'web-app/config/environment'], function (exports, Configuration, TokenAuthenticator, JWTAuthenticator, Authorizer, ENV) {
+
+  'use strict';
+
+  exports['default'] = {
+    name: 'simple-auth-token',
+    before: 'simple-auth',
+    initialize: function initialize(container) {
+      Configuration['default'].load(container, ENV['default']['simple-auth-token'] || {});
+      container.register('simple-auth-authorizer:token', Authorizer['default']);
+      container.register('simple-auth-authenticator:token', TokenAuthenticator['default']);
+      container.register('simple-auth-authenticator:jwt', JWTAuthenticator['default']);
+    }
   };
 
 });
@@ -250,7 +162,9 @@ define('web-app/pods/user/template', ['exports'], function (exports) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
-          var el1 = dom.createComment("");
+          var el1 = dom.createElement("li");
+          var el2 = dom.createComment("");
+          dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
           dom.appendChild(el0, el1);
@@ -276,7 +190,7 @@ define('web-app/pods/user/template', ['exports'], function (exports) {
           } else {
             fragment = this.build(dom);
           }
-          var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
+          var morph0 = dom.createMorphAt(dom.childAt(fragment, [1]),0,0);
           content(env, morph0, context, "user.username");
           return fragment;
         }
@@ -290,11 +204,13 @@ define('web-app/pods/user/template', ['exports'], function (exports) {
       hasRendered: false,
       build: function build(dom) {
         var el0 = dom.createDocumentFragment();
-        var el1 = dom.createTextNode("user index\n\n");
+        var el1 = dom.createElement("ul");
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
-        var el1 = dom.createComment("");
-        dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n");
+        var el1 = dom.createTextNode("\n\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
@@ -322,8 +238,8 @@ define('web-app/pods/user/template', ['exports'], function (exports) {
         } else {
           fragment = this.build(dom);
         }
-        var morph0 = dom.createMorphAt(fragment,1,1,contextualElement);
-        var morph1 = dom.createMorphAt(fragment,3,3,contextualElement);
+        var morph0 = dom.createMorphAt(dom.childAt(fragment, [0]),1,1);
+        var morph1 = dom.createMorphAt(fragment,2,2,contextualElement);
         block(env, morph0, context, "each", [get(env, context, "model")], {"keyword": "user"}, child0, null);
         content(env, morph1, context, "outlet");
         return fragment;
@@ -697,16 +613,295 @@ define('web-app/templates/login', ['exports'], function (exports) {
   }()));
 
 });
-define('web-app/utils/is-secure-url', ['exports'], function (exports) {
+define('web-app/tests/adapters/application.jshint', function () {
 
   'use strict';
 
-  exports['default'] = function (url) {
-    var link = document.createElement('a');
-    link.href = url;
-    link.href = link.href;
-    return link.protocol == 'https:';
+  module('JSHint - adapters');
+  test('adapters/application.js should pass jshint', function() { 
+    ok(true, 'adapters/application.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/app.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - .');
+  test('app.js should pass jshint', function() { 
+    ok(true, 'app.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/controllers/login.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - controllers');
+  test('controllers/login.js should pass jshint', function() { 
+    ok(true, 'controllers/login.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/helpers/resolver', ['exports', 'ember/resolver', 'web-app/config/environment'], function (exports, Resolver, config) {
+
+  'use strict';
+
+  var resolver = Resolver['default'].create();
+
+  resolver.namespace = {
+    modulePrefix: config['default'].modulePrefix,
+    podModulePrefix: config['default'].podModulePrefix
+  };
+
+  exports['default'] = resolver;
+
+});
+define('web-app/tests/helpers/resolver.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - helpers');
+  test('helpers/resolver.js should pass jshint', function() { 
+    ok(true, 'helpers/resolver.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/helpers/start-app', ['exports', 'ember', 'web-app/app', 'web-app/router', 'web-app/config/environment'], function (exports, Ember, Application, Router, config) {
+
+  'use strict';
+
+
+
+  exports['default'] = startApp;
+  function startApp(attrs) {
+    var application;
+
+    var attributes = Ember['default'].merge({}, config['default'].APP);
+    attributes = Ember['default'].merge(attributes, attrs); // use defaults, but you can override;
+
+    Ember['default'].run(function () {
+      application = Application['default'].create(attributes);
+      application.setupForTesting();
+      application.injectTestHelpers();
+    });
+
+    return application;
   }
+
+});
+define('web-app/tests/helpers/start-app.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - helpers');
+  test('helpers/start-app.js should pass jshint', function() { 
+    ok(true, 'helpers/start-app.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/pods/user/model.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - pods/user');
+  test('pods/user/model.js should pass jshint', function() { 
+    ok(true, 'pods/user/model.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/pods/user/route.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - pods/user');
+  test('pods/user/route.js should pass jshint', function() { 
+    ok(true, 'pods/user/route.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/router.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - .');
+  test('router.js should pass jshint', function() { 
+    ok(true, 'router.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/routes/application.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - routes');
+  test('routes/application.js should pass jshint', function() { 
+    ok(true, 'routes/application.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/routes/login.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - routes');
+  test('routes/login.js should pass jshint', function() { 
+    ok(true, 'routes/login.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/serializers/application.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - serializers');
+  test('serializers/application.js should pass jshint', function() { 
+    ok(true, 'serializers/application.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/test-helper', ['web-app/tests/helpers/resolver', 'ember-qunit'], function (resolver, ember_qunit) {
+
+	'use strict';
+
+	ember_qunit.setResolver(resolver['default']);
+
+});
+define('web-app/tests/test-helper.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - .');
+  test('test-helper.js should pass jshint', function() { 
+    ok(true, 'test-helper.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/unit/controllers/login-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('controller:login', {});
+
+  // Replace this with your real tests.
+  ember_qunit.test('it exists', function (assert) {
+    var controller = this.subject();
+    assert.ok(controller);
+  });
+
+  // Specify the other units that are required for this test.
+  // needs: ['controller:foo']
+
+});
+define('web-app/tests/unit/controllers/login-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/controllers');
+  test('unit/controllers/login-test.js should pass jshint', function() { 
+    ok(true, 'unit/controllers/login-test.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/unit/pods/user/model-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleForModel('user', {
+    // Specify the other units that are required for this test.
+    needs: []
+  });
+
+  ember_qunit.test('it exists', function (assert) {
+    var model = this.subject();
+    // var store = this.store();
+    assert.ok(!!model);
+  });
+
+});
+define('web-app/tests/unit/pods/user/model-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/pods/user');
+  test('unit/pods/user/model-test.js should pass jshint', function() { 
+    ok(true, 'unit/pods/user/model-test.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/unit/pods/user/route-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('route:user', {});
+
+  ember_qunit.test('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+
+  // Specify the other units that are required for this test.
+  // needs: ['controller:foo']
+
+});
+define('web-app/tests/unit/pods/user/route-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/pods/user');
+  test('unit/pods/user/route-test.js should pass jshint', function() { 
+    ok(true, 'unit/pods/user/route-test.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/unit/routes/application-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('route:application', {});
+
+  ember_qunit.test('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+
+  // Specify the other units that are required for this test.
+  // needs: ['controller:foo']
+
+});
+define('web-app/tests/unit/routes/application-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/routes');
+  test('unit/routes/application-test.js should pass jshint', function() { 
+    ok(true, 'unit/routes/application-test.js should pass jshint.'); 
+  });
+
+});
+define('web-app/tests/unit/routes/login-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor('route:login', {});
+
+  ember_qunit.test('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+
+  // Specify the other units that are required for this test.
+  // needs: ['controller:foo']
+
+});
+define('web-app/tests/unit/routes/login-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/routes');
+  test('unit/routes/login-test.js should pass jshint', function() { 
+    ok(true, 'unit/routes/login-test.js should pass jshint.'); 
+  });
 
 });
 /* jshint ignore:start */
@@ -716,13 +911,14 @@ define('web-app/utils/is-secure-url', ['exports'], function (exports) {
 /* jshint ignore:start */
 
 define('web-app/config/environment', ['ember'], function(Ember) {
-  return { 'default': {"modulePrefix":"web-app","podModulePrefix":"web-app/pods","environment":"production","baseURL":"/","locationType":"auto","EmberENV":{"FEATURES":{}},"APP":{"API_HOST":"http://localhost:8000","API_NAMESPACE":"api/v1","name":"web-app","version":"0.0.0.0f85da9f","API_ADD_TRAILING_SLASHES":true},"simple-auth":{"authorizer":"authorizer:django-rest","serverTokenEndpoint":"http://localhost:8000/api-token-auth/","crossOriginWhitelist":["http://localhost:8000"]},"contentSecurityPolicyHeader":"Content-Security-Policy-Report-Only","contentSecurityPolicy":{"default-src":"'none'","script-src":"'self'","font-src":"'self'","connect-src":"'self'","img-src":"'self'","style-src":"'self'","media-src":"'self'"},"exportApplicationGlobal":false}};
+  return { 'default': {"modulePrefix":"web-app","podModulePrefix":"web-app/pods","environment":"development","baseURL":"/","locationType":"auto","EmberENV":{"FEATURES":{}},"APP":{"API_HOST":"http://localhost:8000","API_NAMESPACE":"api/v1","name":"web-app","version":"0.0.0.1de52322","API_ADD_TRAILING_SLASHES":true},"simple-auth":{"authorizer":"simple-auth-authorizer:token","serverTokenEndpoint":"http://localhost:8000/api-token-auth/","crossOriginWhitelist":["http://localhost:8000"]},"simple-auth-token":{"serverTokenEndpoint":"http://localhost:8000/api-token-auth/","authorizationPrefix":"Token ","tokenPropertyName":"secure.token"},"contentSecurityPolicy":{"default-src":"'none'","script-src":"'self'","font-src":"'self' ","connect-src":"'self' http://localhost:8000","img-src":"'self' ","style-src":"'self' 'unsafe-inline' http://fonts.googleapis.com","media-src":"'self'"},"contentSecurityPolicyHeader":"Content-Security-Policy-Report-Only","exportApplicationGlobal":true}};
 });
 
 if (runningTests) {
   require("web-app/tests/test-helper");
 } else {
-  require("web-app/app")["default"].create({"API_HOST":"http://localhost:8000","API_NAMESPACE":"api/v1","name":"web-app","version":"0.0.0.0f85da9f","API_ADD_TRAILING_SLASHES":true});
+  require("web-app/app")["default"].create({"API_HOST":"http://localhost:8000","API_NAMESPACE":"api/v1","name":"web-app","version":"0.0.0.1de52322","API_ADD_TRAILING_SLASHES":true});
 }
 
 /* jshint ignore:end */
+//# sourceMappingURL=web-app-162aa6938238acf8c1b6cd5a9cdcd99e.map

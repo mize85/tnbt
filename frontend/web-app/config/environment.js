@@ -1,5 +1,7 @@
 /* jshint node: true */
 
+var HOST = 'http://localhost:8000';
+
 module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'web-app',
@@ -20,16 +22,32 @@ module.exports = function(environment) {
     }
   };
 
-    ENV.APP.API_HOST = 'http://localhost:8000';
+    ENV.APP.API_HOST = HOST;
     ENV.APP.API_NAMESPACE = 'api/v1';
 
 
     ENV['simple-auth'] = {
-      authorizer: 'authorizer:django-rest',
-      serverTokenEndpoint: ENV.APP.API_HOST+'/api-token-auth/',
-      crossOriginWhitelist: [ENV.APP.API_HOST]
+      authorizer: 'simple-auth-authorizer:token',
+      serverTokenEndpoint: HOST+'/api-token-auth/',
+
+      crossOriginWhitelist: [HOST]
     };
 
+    ENV['simple-auth-token'] = {
+        serverTokenEndpoint: HOST+'/api-token-auth/',
+        authorizationPrefix: 'Token ',
+        tokenPropertyName: 'secure.token'
+    };
+
+    ENV.contentSecurityPolicy = {
+      'default-src': "'none'",
+      'script-src': "'self'", // Allow scripts from https://cdn.mxpnl.com
+      'font-src': "'self' ", // Allow fonts to be loaded from http://fonts.gstatic.com
+      'connect-src': "'self' "+HOST, // Allow data (ajax/websocket) from api.mixpanel.com and custom-api.local
+      'img-src': "'self' ",
+      'style-src': "'self' 'unsafe-inline' http://fonts.googleapis.com", // Allow inline styles and loaded CSS from http://fonts.googleapis.com
+      'media-src': "'self'"
+    };
 
   if (environment === 'development') {
     // ENV.APP.LOG_RESOLVER = true;
