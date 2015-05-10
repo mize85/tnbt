@@ -1,0 +1,12 @@
+{
+	"version": 3,
+	"file": "web-app.css",
+	"sources": [
+		"../../tree_merger-tmp_dest_dir-4Dm0rUnR.tmp/app/styles/app.scss"
+	],
+	"sourcesContent": [
+		"#title{\n  color: red;\n}"
+	],
+	"mappings": "AAAA,MAAM,CAAA;EACJ,KAAK,EAAE,GAAI,GADN",
+	"names": []
+}
