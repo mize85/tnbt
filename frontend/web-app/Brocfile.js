@@ -9,11 +9,11 @@ var app = new EmberApp({
     },
     minifyJS: {
       enabled: false
-    }/*,
+    },
     fingerprint: {
      enabled: true,
      prepend: '/static/'
-   }*/
+   }
 });
 
 // Use `app.import` to add additional libraries to the generated

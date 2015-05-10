@@ -9,7 +9,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">TNBT</a>
+            {{#link-to 'index' class="navbar-brand"}}TNBT{{/link-to}}
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -45,7 +45,7 @@
     <div class="container">
 
       <!-- Main component for a primary marketing message or call to action -->
-      {{outlet}}
+      {{liquid-outlet class="demo-container"}}
 
     </div> <!-- /container -->
 
