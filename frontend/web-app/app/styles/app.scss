@@ -1,3 +1,8 @@
-#title{
-  color: red;
+
+// themes
+@import 'themes/sandstorm';
+
+body {
+  min-height: 2000px;
+  padding-top: 70px;
 }
