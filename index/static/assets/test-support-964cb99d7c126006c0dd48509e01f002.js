@@ -5546,8 +5546,8 @@ QUnit.config.urlConfig.push({ id: 'doccontainer', label: 'Doc test pane'});
 if (QUnit.notifications) {
   QUnit.notifications({
     icons: {
-      passed: '/assets/passed-f03380ac8e666e7c28dfe944755eb00c.png',
-      failed: '/assets/failed-3986ab8c4f732525d116acced8a71305.png'
+      passed: '/static/assets/passed-f03380ac8e666e7c28dfe944755eb00c.png',
+      failed: '/static/assets/failed-3986ab8c4f732525d116acced8a71305.png'
     }
   });
 }
@@ -5587,4 +5587,4 @@ runningTests = true;
 
 
 /* jshint ignore:end */
-//# sourceMappingURL=test-support-26c72a283c0371bfbf8bb39df33aefe5.map
+//# sourceMappingURL=assets/test-support-26c72a283c0371bfbf8bb39df33aefe5.map

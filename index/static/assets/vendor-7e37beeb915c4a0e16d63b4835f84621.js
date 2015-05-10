@@ -76418,4 +76418,4 @@ define('simple-auth-token/utils/load-config', ['exports', 'ember'], function (ex
 
 
 /* jshint ignore:end */
-//# sourceMappingURL=vendor-979c6808cf82af01553e6c6579017cf3.map
+//# sourceMappingURL=assets/vendor-979c6808cf82af01553e6c6579017cf3.map
