@@ -22,6 +22,11 @@ module.exports = function(environment) {
     }
   };
 
+
+    if (environment === 'production') {
+        HOST = "http://tnbt.elasticbeanstalk.com/";
+    }
+
     ENV.APP.API_HOST = HOST;
     ENV.APP.API_NAMESPACE = 'api/v1';
 
@@ -70,9 +75,7 @@ module.exports = function(environment) {
     ENV.APP.rootElement = '#ember-testing';
   }
 
-  if (environment === 'production') {
 
-  }
 
   return ENV;
 };
