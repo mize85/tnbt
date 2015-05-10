@@ -11,8 +11,8 @@ var app = new EmberApp({
       enabled: false
     },
     fingerprint: {
-     enabled: true,/*
-     prepend: '/static/'*/
+     enabled: true,
+     prepend: '/static/'
    }
 });
 
