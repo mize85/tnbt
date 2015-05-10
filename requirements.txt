@@ -2,6 +2,7 @@ Django==1.8.1
 PyYAML==3.11
 awsebcli==3.4
 cement==2.4.0
+django-cors-headers==1.0.0
 djangorestframework==3.1.1
 docker-py==1.1.0
 dockerpty==0.3.2
