@@ -18,12 +18,13 @@ body.index{
     -moz-background-size: cover;
     background-size: cover;
     -o-background-size: cover;
+
+    .intro-text {
+      padding-top: 100px;
+      padding-bottom: 50px;
+    }
 }
 
-header .intro-text {
-    padding-top: 100px;
-    padding-bottom: 50px;
-}
 
 header .intro-text .intro-lead-in {
     margin-bottom: 25px;
