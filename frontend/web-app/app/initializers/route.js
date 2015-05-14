@@ -6,7 +6,7 @@ export function initialize(/* container, application */) {
     var cssClass = this.toCssClass();
     // you probably don't need the application class
     // to be added to the body
-    if (cssClass != 'application') {
+    if (cssClass !== 'application') {
       Ember.$('body').addClass(cssClass);
     }
   },
