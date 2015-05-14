@@ -5,7 +5,7 @@ var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 var app = new EmberApp({
     storeConfigInMeta: false,
     fingerprint: {
-        prepend: 'tnbt.de.s3-website.eu-central-1.amazonaws.com'
+        prepend: 'http://tnbt-us.s3-website-us-east-1.amazonaws.com/'
     }
 });
 
