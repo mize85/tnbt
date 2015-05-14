@@ -1,8 +1,5 @@
-<ul>
 {{#each user in model}}
-    <li>{{user.username}}</li>
+    <div class="col-md-6">
+        {{user-list-item user=user}}
+    </div>
 {{/each}}
-</ul>
-
-
-{{outlet}}
