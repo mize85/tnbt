@@ -1,6 +1,6 @@
 /* jshint node: true */
 
-var HOST = "http://localhost:8000";
+var HOST = "http://tnbt.elasticbeanstalk.com";
 
 module.exports = function(environment) {
   var ENV = {

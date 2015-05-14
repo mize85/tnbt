@@ -4,10 +4,10 @@ import ApplicationRouteMixin from 'simple-auth/mixins/application-route-mixin';
 export default Ember.Route.extend(ApplicationRouteMixin, {
     actions: {
         sessionAuthenticationSucceeded: function(response){
-            debugger;
+            this.transitionTo('index');
         },
         sessionAuthenticationFailed: function(response){
-            debugger;
+            Ember.Logger.error(response);
         }
     }
 });
