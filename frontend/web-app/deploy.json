@@ -1,0 +1,17 @@
+{
+  "development": {
+    "store": {
+      "type": "S3",
+      "accessKeyId": "AKIAIZMEFDCSSQMN4FCQ",
+      "secretAccessKey": "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",
+      "bucket": "tnbt.de"
+    },
+
+    "assets": {
+      "type": "s3",
+      "accessKeyId": "AKIAIZMEFDCSSQMN4FCQ",
+      "secretAccessKey": "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",
+      "bucket": "tnbt.de"
+    }
+  }
+}

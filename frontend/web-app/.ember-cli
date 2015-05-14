@@ -4,7 +4,8 @@
     anonymous, but there are times when you might want to disable this behavior.
 
     Setting `disableAnalytics` to true will prevent any data from being sent.
+
+    "output-path": "../../index/static"
   */
-  "disableAnalytics": false,
-  "output-path": "../../index/static"
+  "disableAnalytics": false
 }

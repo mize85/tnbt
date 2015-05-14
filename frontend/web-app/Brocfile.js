@@ -4,16 +4,9 @@ var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 var app = new EmberApp({
     storeConfigInMeta: false,
-    minifyCSS: {
-      enabled: false
-    },
-    minifyJS: {
-      enabled: false
-    },
     fingerprint: {
-     enabled: true,
-     prepend: '/static/'
-   }
+        prepend: 'tnbt.de.s3-website.eu-central-1.amazonaws.com'
+    }
 });
 
 // Use `app.import` to add additional libraries to the generated

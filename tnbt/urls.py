@@ -27,7 +27,7 @@ router.register(r'users', UserViewSet)
 router.register(r'groups', GroupViewSet)
 
 urlpatterns = [
-    url(r'^$', 'index.views.static_index_view', name='index'),
+    #url(r'^$', 'index.views.static_index_view', name='index'),
     url(r'^api-token-auth/', obtain_auth_token),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/v1/', include(router.urls)),
